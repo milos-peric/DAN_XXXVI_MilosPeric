@@ -46,12 +46,10 @@ namespace DAN_XXXVI_MilosPeric
             int[,] newmat = new int[100, 100];
             lock (listlock)
             {
-
                 while (numbersList1.Count != 10000)
                 {
                     Monitor.Wait(listlock);
                 }
-
                 for (int i = 0; i < 100; i++)
                 {
                     for (int j = 0; j < 100; j++)

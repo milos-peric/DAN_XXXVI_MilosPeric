@@ -29,8 +29,7 @@ namespace DAN_XXXVI_MilosPeric
             t3.Start();
             t4.Start();
             t3.Join();
-            t4.Join();
-            
+            t4.Join();            
             Console.ReadKey();
         }
     }
