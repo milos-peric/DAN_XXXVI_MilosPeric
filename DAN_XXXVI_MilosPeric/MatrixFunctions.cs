@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,9 +10,10 @@ namespace DAN_XXXVI_MilosPeric
 {
     class MatrixFunctions
     {
+        private const string matrixFileName = @"..\..\MatrixOddPart.txt";
         private List<int> numbersList1 = new List<int>();
         private int[,] numbersMatrix1 = new int[100, 100];
-        readonly object listlock = new object();
+        private readonly object listlock = new object();
 
         /// <summary>
         /// Generates random list of numbers and adds it to multidimensional array.
@@ -57,6 +59,68 @@ namespace DAN_XXXVI_MilosPeric
                         newmat[i, j] = numbersMatrix1[i, j];
                     }
                 }
+            }
+        }
+
+        public List<int> SelectOddNumbers()
+        {
+            List<int> oddNumbersList = new List<int>();
+            foreach (var item in numbersList1)
+            {
+                if (item % 2 == 1)
+                    oddNumbersList.Add(item);
+            }
+            return oddNumbersList;
+        }
+
+        public void WriteOddNumbersToFile()
+        {
+            try
+            {
+                lock (listlock)
+                {
+                    List<int> localList = SelectOddNumbers();
+                    using (StreamWriter streamWriter = new StreamWriter(matrixFileName))
+                    {
+                        foreach (var item in localList)
+                        {
+                            streamWriter.WriteLine(item);
+                        }
+                    }
+                    Monitor.Pulse(listlock);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Write to file is not possible.");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void ReadFile()
+        {
+            try
+            {
+                lock (listlock)
+                {
+                    while (!File.Exists(matrixFileName))
+                    {
+                        Monitor.Wait(listlock);
+                    }
+                    using (StreamReader streamReader = new StreamReader(matrixFileName))
+                    {
+                        string line;
+                        while ((line = streamReader.ReadLine()) != null)
+                        {
+                            Console.Write(line + " ");
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Can't read from {0} file or file doesn't exist.", matrixFileName);
+                Console.WriteLine(e.Message);
             }
         }
     }

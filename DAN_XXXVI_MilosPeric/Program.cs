@@ -20,6 +20,15 @@ namespace DAN_XXXVI_MilosPeric
             t2.Start();
             t1.Join();
             t2.Join();
+            Thread t3 = new Thread(new ThreadStart(treads.WriteOddNumbersToFile));
+            t3.Name = "Thread 3";
+            Thread t4 = new Thread(new ThreadStart(treads.ReadFile));
+            t4.Name = "Thread 4";
+            t3.Start();
+            t4.Start();
+            t3.Join();
+            t4.Join();
+            Console.ReadKey();
         }
     }
 }
